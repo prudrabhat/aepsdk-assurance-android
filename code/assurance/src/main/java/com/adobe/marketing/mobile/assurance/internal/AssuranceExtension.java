@@ -79,7 +79,8 @@ public final class AssuranceExtension extends Extension {
                 Collections.unmodifiableList(
                         Arrays.asList(
                                 new AssurancePluginLogForwarder(),
-                                new AssurancePluginScreenshot(),
+                                // new AssurancePluginScreenshot(),
+                                new AssuranceAppScanner(),
                                 new AssurancePluginConfigSwitcher(),
                                 new AssurancePluginFakeEventGenerator())));
     }

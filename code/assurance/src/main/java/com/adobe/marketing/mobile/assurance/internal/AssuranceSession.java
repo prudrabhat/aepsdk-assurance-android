@@ -19,10 +19,15 @@ import android.os.Looper;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import com.adobe.marketing.mobile.Assurance;
+import com.adobe.marketing.mobile.Event;
+import com.adobe.marketing.mobile.EventSource;
+import com.adobe.marketing.mobile.EventType;
+import com.adobe.marketing.mobile.MobileCore;
 import com.adobe.marketing.mobile.services.Log;
 import com.adobe.marketing.mobile.util.StringUtils;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -475,6 +480,18 @@ class AssuranceSession implements AssuranceWebViewSocketHandler {
                 listener.onSessionConnected();
             }
         }
+
+        final HashMap<String, Object> eventData = new HashMap<>();
+        eventData.put("sessionId", sessionId);
+        eventData.put("environment", assuranceEnvironment.toString());
+        final Event e =
+                new Event.Builder(
+                                "Assurance Session Connected",
+                                EventType.ASSURANCE,
+                                EventSource.RESPONSE_CONTENT)
+                        .setEventData(eventData)
+                        .build();
+        MobileCore.dispatchEvent(e);
     }
 
     /**
@@ -506,6 +523,18 @@ class AssuranceSession implements AssuranceWebViewSocketHandler {
                 unregisterStatusListener(listener);
             }
         }
+
+        final HashMap<String, Object> eventData = new HashMap<>();
+        eventData.put("sessionId", null);
+        eventData.put("environment", null);
+        final Event e =
+                new Event.Builder(
+                                "Assurance Session Connected",
+                                EventType.ASSURANCE,
+                                EventSource.RESPONSE_CONTENT)
+                        .setEventData(eventData)
+                        .build();
+        MobileCore.dispatchEvent(e);
     }
 
     /**
