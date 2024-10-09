@@ -443,6 +443,10 @@ class AssuranceSession implements AssuranceWebViewSocketHandler {
         }
     }
 
+    void onScanModeChanged(final boolean isScanning) {
+        assuranceSessionPresentationManager.onScanModeChanged(isScanning);
+    }
+
     /**
      * Handles {@code AssuranceConstants.ControlType.START_EVENT_FORWARDING} event by doing the
      * following :

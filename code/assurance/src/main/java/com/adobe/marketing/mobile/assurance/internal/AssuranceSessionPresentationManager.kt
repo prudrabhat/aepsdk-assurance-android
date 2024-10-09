@@ -174,6 +174,15 @@ internal class AssuranceSessionPresentationManager {
         AssuranceComponentRegistry.appState.logStatus(visibility, message)
     }
 
+    @JvmName("onScanModeChanged")
+    internal fun onScanModeChanged(active: Boolean) {
+        if (active) {
+            button.hide()
+        } else {
+            if (button.isActive()) button.show()
+        }
+    }
+
     private fun showAssuranceActivity(currentActivity: Activity?) {
         if (currentActivity == null) return
         val intent = Intent(currentActivity, AssuranceActivity::class.java)

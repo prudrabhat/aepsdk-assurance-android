@@ -16,6 +16,10 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
 import com.adobe.marketing.mobile.Assurance
+import com.adobe.marketing.mobile.Event
+import com.adobe.marketing.mobile.EventSource
+import com.adobe.marketing.mobile.EventType
+import com.adobe.marketing.mobile.MobileCore
 import com.adobe.marketing.mobile.assurance.internal.AssuranceConstants.BlobKeys.RESPONSE_KEY_BLOB_ID
 import com.adobe.marketing.mobile.assurance.internal.AssuranceConstants.BlobKeys.UPLOAD_ENDPOINT_FORMAT
 import com.adobe.marketing.mobile.assurance.internal.AssuranceConstants.BlobKeys.UPLOAD_PATH_API
@@ -63,8 +67,15 @@ internal class AssuranceAppScanner : AssurancePlugin {
         }
 
         scope.launch {
-            manageScreenShot(currentActivity)
+            // manageScreenShot(currentActivity)
         }
+
+        currentSession?.onScanModeChanged(true)
+
+        val scanEvent = Event.Builder("ScanEvent", EventType.CUSTOM, EventSource.NONE)
+            .setEventData(mapOf("scanMode" to true))
+            .build()
+        MobileCore.dispatchEvent(scanEvent)
     }
 
     override fun onRegistered(parentSession: AssuranceSession?) {

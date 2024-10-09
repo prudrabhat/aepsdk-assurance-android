@@ -174,7 +174,6 @@ internal class AssuranceFloatingButton(appContextService: AppContextService) {
             return backupGraphic
         }
 
-        val temp = drawable.toBitmap(config = Bitmap.Config.ARGB_8888)
-        return temp.copy(Bitmap.Config.ARGB_8888, true)
+        return drawable.toBitmap()
     }
 }
