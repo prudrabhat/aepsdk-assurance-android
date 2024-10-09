@@ -15,11 +15,13 @@ import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
+import android.util.Base64
 import com.adobe.marketing.mobile.Assurance
 import com.adobe.marketing.mobile.Event
 import com.adobe.marketing.mobile.EventSource
 import com.adobe.marketing.mobile.EventType
 import com.adobe.marketing.mobile.MobileCore
+import com.adobe.marketing.mobile.assurance.internal.AssuranceAppScanner.Companion.LOG_TAG
 import com.adobe.marketing.mobile.assurance.internal.AssuranceConstants.BlobKeys.RESPONSE_KEY_BLOB_ID
 import com.adobe.marketing.mobile.assurance.internal.AssuranceConstants.BlobKeys.UPLOAD_ENDPOINT_FORMAT
 import com.adobe.marketing.mobile.assurance.internal.AssuranceConstants.BlobKeys.UPLOAD_PATH_API
@@ -102,7 +104,26 @@ internal class AssuranceAppScanner : AssurancePlugin {
         val returnedBitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
         val canvas: Canvas = Canvas(returnedBitmap)
         view.draw(canvas)
+        val stream = ByteArrayOutputStream()
+        returnedBitmap.compress(Bitmap.CompressFormat.PNG, 90, stream)
+        val imageBytes = stream.toByteArray()
 
+        val bodyBytes: String = Base64.encodeToString(imageBytes, Base64.DEFAULT)
+        AssuranceBlobUploader.INSTANCE.upload(currentSession!!, bodyBytes)
+    }
+}
+
+internal class AssuranceBlobUploader {
+    companion object {
+        private const val LOG_TAG = "AssuranceBlobUploader"
+        val INSTANCE = AssuranceBlobUploader()
+    }
+
+    fun upload(
+        session: AssuranceSession,
+        imageBase64: String
+    ) {
+        val imageBytes = Base64.decode(imageBase64, Base64.DEFAULT)
         val networkService = ServiceProvider.getInstance().networkService
 
         val endpoint: String = String.format(UPLOAD_ENDPOINT_FORMAT, "")
@@ -112,7 +133,7 @@ internal class AssuranceAppScanner : AssurancePlugin {
                 .appendPath(UPLOAD_PATH_API)
                 .appendPath(UPLOAD_PATH_FILEUPLOAD)
                 .appendQueryParameter(
-                    UPLOAD_QUERY_KEY, currentSession?.sessionId ?: ""
+                    UPLOAD_QUERY_KEY, session.sessionId
                 )
                 .build()
                 .toString()
@@ -120,21 +141,14 @@ internal class AssuranceAppScanner : AssurancePlugin {
         val headers: Map<String, String> = mapOf(
             NetworkingConstants.Headers.ACCEPT to NetworkingConstants.HeaderValues.CONTENT_TYPE_JSON_APPLICATION,
             NetworkingConstants.Headers.CONTENT_TYPE to "application/octet-stream",
-            "Content-Length" to returnedBitmap.byteCount.toString()
+            "Content-Length" to imageBytes.size.toString()
 
         )
 
-        // bf7248f92b53/aa5e4a9c2c72/launch-0e7e47cda07d-development
-
-        val stream = ByteArrayOutputStream()
-        returnedBitmap.compress(Bitmap.CompressFormat.PNG, 90, stream)
-        val imageBytes = stream.toByteArray()
-
-        val bodyBytes: ByteArray = imageBytes
         val request = NetworkRequest(
             uri,
             HttpMethod.POST,
-            bodyBytes,
+            imageBytes,
             headers,
             QuickConnect.CONNECTION_TIMEOUT_MS,
             QuickConnect.READ_TIMEOUT_MS
@@ -150,15 +164,8 @@ internal class AssuranceAppScanner : AssurancePlugin {
                 return@connectAsync
             }
 
-            Log.debug(
-                LOG_TAG,
-                Assurance.LOG_TAG,
-                "Response code ${response.responseCode}, response body $response",
-            )
-
             val responseJson = JSONObject(response.inputStream.readBytes().toString(Charsets.UTF_8))
             if (responseJson.has(RESPONSE_KEY_BLOB_ID)) {
-
                 val screenShotEventData = mapOf(
                     "blobId" to responseJson.getString(RESPONSE_KEY_BLOB_ID),
                     "mimeType" to "image/png"
@@ -168,7 +175,7 @@ internal class AssuranceAppScanner : AssurancePlugin {
                     AssuranceConstants.AssuranceEventType.BLOB,
                     screenShotEventData
                 )
-                currentSession?.queueOutboundEvent(assuranceEvent)
+                session.queueOutboundEvent(assuranceEvent)
             } else {
                 Log.debug(
                     LOG_TAG,

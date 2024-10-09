@@ -38,6 +38,7 @@ import com.adobe.marketing.mobile.services.ServiceProvider;
 import com.adobe.marketing.mobile.util.DataReader;
 import com.adobe.marketing.mobile.util.DataReaderException;
 import com.adobe.marketing.mobile.util.StringUtils;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -385,6 +386,19 @@ public final class AssuranceExtension extends Extension {
         if (!StringUtils.isNullOrEmpty(sessionURL)) {
             startSession(sessionURL);
             return;
+        }
+
+        final String isBlobEvent = DataReader.optString(eventData, "type", "");
+        if (isBlobEvent.equals("blob")) {
+            final String imageData = DataReader.optString(eventData, "imageBase64", "");
+            final String screen = DataReader.optString(eventData, "screen", "");
+            final String sessionId = DataReader.optString(eventData, "sessionId", "");
+            final String environment = DataReader.optString(eventData, "environment", "");
+            final AssuranceSession session = assuranceSessionOrchestrator.getActiveSession();
+            if (session != null) {
+
+                AssuranceBlobUploader.Companion.getINSTANCE().upload(session, imageData);
+            }
         }
 
         Log.warning(
