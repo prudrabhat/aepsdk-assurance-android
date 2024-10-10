@@ -121,7 +121,8 @@ internal class AssuranceBlobUploader {
 
     fun upload(
         session: AssuranceSession,
-        imageBase64: String
+        imageBase64: String,
+        screen: String? = null
     ) {
         val imageBytes = Base64.decode(imageBase64, Base64.DEFAULT)
         val networkService = ServiceProvider.getInstance().networkService
@@ -174,7 +175,8 @@ internal class AssuranceBlobUploader {
             if (responseJson.has(RESPONSE_KEY_BLOB_ID)) {
                 val screenShotEventData = mapOf(
                     "blobId" to responseJson.getString(RESPONSE_KEY_BLOB_ID),
-                    "mimeType" to "image/png"
+                    "mimeType" to "image/png",
+                    "screenId" to screen
                 )
 
                 val assuranceEvent = AssuranceEvent(

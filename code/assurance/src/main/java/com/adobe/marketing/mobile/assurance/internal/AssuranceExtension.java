@@ -397,7 +397,7 @@ public final class AssuranceExtension extends Extension {
             final AssuranceSession session = assuranceSessionOrchestrator.getActiveSession();
             if (session != null) {
 
-                AssuranceBlobUploader.Companion.getINSTANCE().upload(session, imageData);
+                AssuranceBlobUploader.Companion.getINSTANCE().upload(session, imageData, screen);
             }
         }
 
