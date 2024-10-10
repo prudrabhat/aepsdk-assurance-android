@@ -38,7 +38,6 @@ import com.adobe.marketing.mobile.services.ServiceProvider;
 import com.adobe.marketing.mobile.util.DataReader;
 import com.adobe.marketing.mobile.util.DataReaderException;
 import com.adobe.marketing.mobile.util.StringUtils;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -239,7 +238,8 @@ public final class AssuranceExtension extends Extension {
         AssuranceComponentRegistry.appState.onSessionPhaseChange(
                 new AssuranceAppState.SessionPhase.Authorizing(
                         new AssuranceAppState.AssuranceAuthorization.QuickConnect(
-                                AssuranceEnvironment.PROD)));
+                                // AssuranceEnvironment.PROD)));
+                                AssuranceEnvironment.QA)));
 
         // Launch the Assurance Activity
         final Intent intent = new Intent(hostApplication, AssuranceActivity.class);

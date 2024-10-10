@@ -126,7 +126,13 @@ internal class AssuranceBlobUploader {
         val imageBytes = Base64.decode(imageBase64, Base64.DEFAULT)
         val networkService = ServiceProvider.getInstance().networkService
 
-        val endpoint: String = String.format(UPLOAD_ENDPOINT_FORMAT, "")
+        val env: String = if (session.assuranceEnvironment == AssuranceConstants.AssuranceEnvironment.PROD) {
+            ""
+        } else {
+            session.assuranceEnvironment.stringValue.lowercase()
+        }
+
+        val endpoint: String = String.format(UPLOAD_ENDPOINT_FORMAT, env)
         val uri =
             Uri.Builder()
                 .encodedPath(endpoint)
