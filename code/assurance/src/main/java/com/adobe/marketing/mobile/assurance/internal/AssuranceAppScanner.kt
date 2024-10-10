@@ -130,7 +130,7 @@ internal class AssuranceBlobUploader {
         val env: String = if (session.assuranceEnvironment == AssuranceConstants.AssuranceEnvironment.PROD) {
             ""
         } else {
-            session.assuranceEnvironment.stringValue.lowercase()
+            "-" + session.assuranceEnvironment.stringValue.lowercase()
         }
 
         val endpoint: String = String.format(UPLOAD_ENDPOINT_FORMAT, env)
