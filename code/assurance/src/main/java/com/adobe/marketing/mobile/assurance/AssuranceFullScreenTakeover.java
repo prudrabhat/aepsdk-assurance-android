@@ -23,6 +23,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.ViewGroup;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.annotation.RequiresApi;
@@ -61,7 +62,10 @@ class AssuranceFullScreenTakeover {
                             public void run() {
                                 try {
                                     webView = new WebView(appContext);
-                                    webView.getSettings().setJavaScriptEnabled(true);
+                                    final WebSettings webSettings = webView.getSettings();
+                                    webSettings.setJavaScriptEnabled(true);
+                                    webSettings.setAllowContentAccess(false);
+                                    webSettings.setAllowFileAccess(false);
                                     webView.setVerticalScrollBarEnabled(false);
                                     webView.setHorizontalScrollBarEnabled(false);
                                     webView.setBackgroundColor(Color.TRANSPARENT);
