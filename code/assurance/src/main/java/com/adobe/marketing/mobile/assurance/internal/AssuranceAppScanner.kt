@@ -1,5 +1,5 @@
 /*
-  Copyright 2022 Adobe. All rights reserved.
+  Copyright 2024 Adobe. All rights reserved.
   This file is licensed to you under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License. You may obtain a copy
   of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -18,10 +18,8 @@ import android.net.Uri
 import android.util.Base64
 import com.adobe.marketing.mobile.Assurance
 import com.adobe.marketing.mobile.Event
-import com.adobe.marketing.mobile.EventSource
 import com.adobe.marketing.mobile.EventType
 import com.adobe.marketing.mobile.MobileCore
-import com.adobe.marketing.mobile.assurance.internal.AssuranceAppScanner.Companion.LOG_TAG
 import com.adobe.marketing.mobile.assurance.internal.AssuranceConstants.BlobKeys.RESPONSE_KEY_BLOB_ID
 import com.adobe.marketing.mobile.assurance.internal.AssuranceConstants.BlobKeys.UPLOAD_ENDPOINT_FORMAT
 import com.adobe.marketing.mobile.assurance.internal.AssuranceConstants.BlobKeys.UPLOAD_PATH_API
@@ -72,10 +70,12 @@ internal class AssuranceAppScanner : AssurancePlugin {
             // manageScreenShot(currentActivity)
         }
 
+        // Hide the Assurance Floating button
         currentSession?.onScanModeChanged(true)
 
-        val scanEvent = Event.Builder("ScanEvent", EventType.CUSTOM, EventSource.NONE)
-            .setEventData(mapOf("scanMode" to true))
+        // Send an event on the EventHub to notify the app that the scan mode is active
+        val scanEvent = Event.Builder("Scan Mode Event", EventType.ASSURANCE, "APP_SCAN")
+            .setEventData(mapOf("isActive" to true))
             .build()
         MobileCore.dispatchEvent(scanEvent)
     }

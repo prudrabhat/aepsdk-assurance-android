@@ -402,13 +402,13 @@ public final class AssuranceExtension extends Extension {
         if (isBlobEvent.equals("blob")) {
             final String imageData = DataReader.optString(eventData, "imageBase64", "");
             final String screen = DataReader.optString(eventData, "screen", "");
-            final String sessionId = DataReader.optString(eventData, "sessionId", "");
             final String environment = DataReader.optString(eventData, "environment", "");
             final AssuranceSession session = assuranceSessionOrchestrator.getActiveSession();
             if (session != null) {
 
                 AssuranceBlobUploader.Companion.getINSTANCE().upload(session, imageData, screen);
             }
+            return;
         }
 
         Log.warning(
