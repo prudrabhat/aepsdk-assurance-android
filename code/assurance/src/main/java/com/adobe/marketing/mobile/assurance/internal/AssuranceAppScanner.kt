@@ -76,7 +76,7 @@ internal class AssuranceAppScanner : AssurancePlugin {
 
         // Send an event on the EventHub to notify the app that the scan mode is active
         val scanEvent = Event.Builder("Scan State", EventType.ASSURANCE, APP_SCAN_EVENT_SOURCE)
-            .setEventData(mapOf("isActive" to "active"))
+            .setEventData(mapOf("state" to "active"))
             .build()
         MobileCore.dispatchEvent(scanEvent)
     }
