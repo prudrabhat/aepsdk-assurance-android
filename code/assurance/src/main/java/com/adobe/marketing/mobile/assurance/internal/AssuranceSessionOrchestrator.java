@@ -325,6 +325,7 @@ class AssuranceSessionOrchestrator {
                     LOG_TAG,
                     "Session Activity Hook - onActivityResumed called "
                             + activity.getClass().getCanonicalName());
+
             final AssuranceSession activeSession = sessionOrchestrator.getActiveSession();
 
             if (activeSession != null) {

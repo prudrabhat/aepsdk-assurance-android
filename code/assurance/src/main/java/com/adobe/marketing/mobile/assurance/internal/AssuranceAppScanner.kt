@@ -40,6 +40,7 @@ import java.io.ByteArrayOutputStream
 internal class AssuranceAppScanner : AssurancePlugin {
     companion object {
         private const val LOG_TAG = "AssuranceAppScanner"
+        private const val APP_SCAN_EVENT_SOURCE = "com.adobe.eventSource.appScan"
     }
 
     val scope = CoroutineScope(Dispatchers.Main)
@@ -74,8 +75,8 @@ internal class AssuranceAppScanner : AssurancePlugin {
         currentSession?.onScanModeChanged(true)
 
         // Send an event on the EventHub to notify the app that the scan mode is active
-        val scanEvent = Event.Builder("Scan Mode Event", EventType.ASSURANCE, "APP_SCAN")
-            .setEventData(mapOf("isActive" to true))
+        val scanEvent = Event.Builder("Scan State", EventType.ASSURANCE, APP_SCAN_EVENT_SOURCE)
+            .setEventData(mapOf("isActive" to "active"))
             .build()
         MobileCore.dispatchEvent(scanEvent)
     }
@@ -149,7 +150,6 @@ internal class AssuranceBlobUploader {
             NetworkingConstants.Headers.ACCEPT to NetworkingConstants.HeaderValues.CONTENT_TYPE_JSON_APPLICATION,
             NetworkingConstants.Headers.CONTENT_TYPE to "application/octet-stream",
             "Content-Length" to imageBytes.size.toString()
-
         )
 
         val request = NetworkRequest(
@@ -176,12 +176,18 @@ internal class AssuranceBlobUploader {
                 val screenShotEventData = mapOf(
                     "blobId" to responseJson.getString(RESPONSE_KEY_BLOB_ID),
                     "mimeType" to "image/png",
+                )
+
+                val metadata = mapOf(
                     "screenId" to screen
                 )
 
                 val assuranceEvent = AssuranceEvent(
+                    AssuranceConstants.VENDOR_ASSURANCE_MOBILE,
                     AssuranceConstants.AssuranceEventType.BLOB,
-                    screenShotEventData
+                    metadata,
+                    screenShotEventData,
+                    System.currentTimeMillis()
                 )
                 session.queueOutboundEvent(assuranceEvent)
             } else {
