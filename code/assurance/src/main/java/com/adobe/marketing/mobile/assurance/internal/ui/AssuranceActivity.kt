@@ -25,7 +25,13 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.navigation.compose.rememberNavController
+import com.adobe.marketing.mobile.Event
+import com.adobe.marketing.mobile.EventType
+import com.adobe.marketing.mobile.MobileCore
+import com.adobe.marketing.mobile.assurance.internal.AssuranceAppState
 import com.adobe.marketing.mobile.assurance.internal.AssuranceComponentRegistry
+import com.adobe.marketing.mobile.assurance.internal.AssuranceConstants
+import com.adobe.marketing.mobile.assurance.internal.AssuranceConstants.AppScanKeys.APP_SCAN_EVENT_SOURCE
 import com.adobe.marketing.mobile.assurance.internal.ui.theme.AssuranceTheme.backgroundColor
 
 /**
@@ -33,10 +39,13 @@ import com.adobe.marketing.mobile.assurance.internal.ui.theme.AssuranceTheme.bac
  */
 class AssuranceActivity : ComponentActivity() {
 
+    private lateinit var initialConnectionPhase: AssuranceAppState.SessionPhase
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val connectionPhase = AssuranceComponentRegistry.appState.sessionPhase.value
+        initialConnectionPhase = connectionPhase
 
         setContent {
             MaterialTheme(
@@ -83,6 +92,22 @@ class AssuranceActivity : ComponentActivity() {
                     }
                 }
             )
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        // If the Assurance session is disconnected when the Assurance UI was launched, and the session
+        // is connected when the UI is closed, then send a scan state event to the app to notify that
+        // the authorization UI is closed and the app is ready for scanning.
+        if (initialConnectionPhase !is AssuranceAppState.SessionPhase.Connected &&
+            AssuranceComponentRegistry.appState.sessionPhase.value is AssuranceAppState.SessionPhase.Connected
+        ) {
+            val scanStateEvent = Event.Builder("Scan State", EventType.ASSURANCE, APP_SCAN_EVENT_SOURCE)
+                .setEventData(mapOf("state" to AssuranceConstants.AppScanKeys.ScanState.READY.toString().lowercase()))
+                .build()
+            MobileCore.dispatchEvent(scanStateEvent)
         }
     }
 }

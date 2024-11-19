@@ -20,6 +20,7 @@ import com.adobe.marketing.mobile.Assurance
 import com.adobe.marketing.mobile.Event
 import com.adobe.marketing.mobile.EventType
 import com.adobe.marketing.mobile.MobileCore
+import com.adobe.marketing.mobile.assurance.internal.AssuranceConstants.AppScanKeys.APP_SCAN_EVENT_SOURCE
 import com.adobe.marketing.mobile.assurance.internal.AssuranceConstants.BlobKeys.RESPONSE_KEY_BLOB_ID
 import com.adobe.marketing.mobile.assurance.internal.AssuranceConstants.BlobKeys.UPLOAD_ENDPOINT_FORMAT
 import com.adobe.marketing.mobile.assurance.internal.AssuranceConstants.BlobKeys.UPLOAD_PATH_API
@@ -40,7 +41,6 @@ import java.io.ByteArrayOutputStream
 internal class AssuranceAppScanner : AssurancePlugin {
     companion object {
         private const val LOG_TAG = "AssuranceAppScanner"
-        private const val APP_SCAN_EVENT_SOURCE = "com.adobe.eventSource.appScan"
     }
 
     val scope = CoroutineScope(Dispatchers.Main)
@@ -76,7 +76,7 @@ internal class AssuranceAppScanner : AssurancePlugin {
 
         // Send an event on the EventHub to notify the app that the scan mode is active
         val scanEvent = Event.Builder("Scan State", EventType.ASSURANCE, APP_SCAN_EVENT_SOURCE)
-            .setEventData(mapOf("state" to "active"))
+            .setEventData(mapOf("state" to AssuranceConstants.AppScanKeys.ScanState.ACTIVE.toString().lowercase()))
             .build()
         MobileCore.dispatchEvent(scanEvent)
     }
@@ -176,6 +176,7 @@ internal class AssuranceBlobUploader {
                 val screenShotEventData = mapOf(
                     "blobId" to responseJson.getString(RESPONSE_KEY_BLOB_ID),
                     "mimeType" to "image/png",
+                    "screenId" to screen
                 )
 
                 val metadata = mapOf(

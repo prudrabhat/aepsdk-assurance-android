@@ -54,6 +54,16 @@ internal object AssuranceConstants {
         const val ORG_ID = "experienceCloud.org"
     }
 
+    internal object AppScanKeys {
+        const val APP_SCAN_EVENT_SOURCE = "com.adobe.eventSource.appScan"
+
+        enum class ScanState {
+            READY,
+            ACTIVE,
+            INACTIVE
+        }
+    }
+
     internal object AssuranceEventType {
         const val GENERIC = "generic"
         const val LOG = "log"
