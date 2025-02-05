@@ -177,7 +177,7 @@ internal class AssuranceSessionPresentationManager {
     @JvmName("onScanModeChanged")
     internal fun onScanModeChanged(active: Boolean) {
         if (active) {
-            button.hide()
+            button.updateGraphic(true)
         } else {
             if (button.isActive()) button.show()
         }

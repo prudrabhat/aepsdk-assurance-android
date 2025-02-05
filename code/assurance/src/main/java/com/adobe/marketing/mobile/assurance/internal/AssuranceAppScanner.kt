@@ -17,10 +17,6 @@ import android.graphics.Canvas
 import android.net.Uri
 import android.util.Base64
 import com.adobe.marketing.mobile.Assurance
-import com.adobe.marketing.mobile.Event
-import com.adobe.marketing.mobile.EventType
-import com.adobe.marketing.mobile.MobileCore
-import com.adobe.marketing.mobile.assurance.internal.AssuranceConstants.AppScanKeys.APP_SCAN_EVENT_SOURCE
 import com.adobe.marketing.mobile.assurance.internal.AssuranceConstants.BlobKeys.RESPONSE_KEY_BLOB_ID
 import com.adobe.marketing.mobile.assurance.internal.AssuranceConstants.BlobKeys.UPLOAD_ENDPOINT_FORMAT
 import com.adobe.marketing.mobile.assurance.internal.AssuranceConstants.BlobKeys.UPLOAD_PATH_API
@@ -74,11 +70,11 @@ internal class AssuranceAppScanner : AssurancePlugin {
         // Hide the Assurance Floating button
         currentSession?.onScanModeChanged(true)
 
-        // Send an event on the EventHub to notify the app that the scan mode is active
-        val scanEvent = Event.Builder("Scan State", EventType.ASSURANCE, APP_SCAN_EVENT_SOURCE)
-            .setEventData(mapOf("state" to AssuranceConstants.AppScanKeys.ScanState.ACTIVE.toString().lowercase()))
-            .build()
-        MobileCore.dispatchEvent(scanEvent)
+//        // Send an event on the EventHub to notify the app that the scan mode is active
+//        val scanEvent = Event.Builder("Scan State", EventType.ASSURANCE, APP_SCAN_EVENT_SOURCE)
+//            .setEventData(mapOf("state" to AssuranceConstants.AppScanKeys.ScanState.ACTIVE.toString().lowercase()))
+//            .build()
+//        MobileCore.dispatchEvent(scanEvent)
     }
 
     override fun onRegistered(parentSession: AssuranceSession?) {

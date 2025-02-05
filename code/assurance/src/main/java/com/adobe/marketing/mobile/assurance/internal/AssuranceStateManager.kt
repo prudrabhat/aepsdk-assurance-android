@@ -37,6 +37,7 @@ internal class AssuranceStateManager {
 
     private val extensionApi: ExtensionApi
     private val assuranceSharedStateManager: AssuranceSharedStateManager
+    private val scanStateManager: ScanStateManager = ScanStateManager(ServiceProvider.getInstance().dataStoreService)
 
     constructor(extensionApi: ExtensionApi) : this(extensionApi, AssuranceSharedStateManager(ServiceProvider.getInstance().dataStoreService))
 
@@ -60,6 +61,9 @@ internal class AssuranceStateManager {
 
     @JvmName("getClientId")
     internal fun getClientId() = assuranceSharedStateManager.assuranceSharedState.clientId
+
+    @JvmName("getScanStateManager")
+    internal fun getScanStateManager() = scanStateManager
 
     /**
      * Updates the AssuranceStateManager about the latest event from the EventHub.

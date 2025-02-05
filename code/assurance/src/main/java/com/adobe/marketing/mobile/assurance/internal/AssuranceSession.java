@@ -264,8 +264,21 @@ class AssuranceSession implements AssuranceWebViewSocketHandler {
     public void onSocketConnected(final AssuranceWebViewSocket socket) {
         Log.debug(Assurance.LOG_TAG, LOG_TAG, "Websocket connected.");
 
+        final boolean wasAttemptingToReconnect = isAttemptingToReconnect;
+        final AssuranceConstants.AppScanKeys.ScanState scanStateBeforeReconnect =
+                assuranceStateManager.getScanStateManager().getScanState();
+
         // reset flags
         isAttemptingToReconnect = false;
+
+        if (wasAttemptingToReconnect) {
+            // then there was no Assurance UI because we were attempting to reconnect
+            // so send a scan mode change event to show the Assurance UI based on current state
+            // Send an event on the EventHub to notify the app that the scan mode is ready
+            assuranceStateManager
+                    .getScanStateManager()
+                    .sendScanStateEvent(scanStateBeforeReconnect);
+        }
 
         // save the connection url
         connectionDataStore.saveConnectionURL(socket.getConnectionURL());
@@ -444,6 +457,15 @@ class AssuranceSession implements AssuranceWebViewSocketHandler {
     }
 
     void onScanModeChanged(final boolean isScanning) {
+        final AssuranceConstants.AppScanKeys.ScanState scanState =
+                isScanning
+                        ? AssuranceConstants.AppScanKeys.ScanState.ACTIVE
+                        : AssuranceConstants.AppScanKeys.ScanState.INACTIVE;
+        // update cache and store on disk
+        assuranceStateManager.getScanStateManager().updateScanState(scanState);
+        // sent the scan state event to the server
+        assuranceStateManager.getScanStateManager().sendScanStateEvent(scanState);
+        // update the UI
         assuranceSessionPresentationManager.onScanModeChanged(isScanning);
     }
 

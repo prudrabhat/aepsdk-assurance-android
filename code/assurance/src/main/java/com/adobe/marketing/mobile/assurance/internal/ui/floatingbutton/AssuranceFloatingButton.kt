@@ -20,6 +20,8 @@ import androidx.core.graphics.drawable.toBitmap
 import com.adobe.marketing.mobile.Assurance
 import com.adobe.marketing.mobile.MobileCore
 import com.adobe.marketing.mobile.assurance.R
+import com.adobe.marketing.mobile.assurance.internal.AssuranceComponentRegistry
+import com.adobe.marketing.mobile.assurance.internal.AssuranceConstants
 import com.adobe.marketing.mobile.assurance.internal.ui.AssuranceActivity
 import com.adobe.marketing.mobile.services.AppContextService
 import com.adobe.marketing.mobile.services.Log
@@ -80,6 +82,14 @@ internal class AssuranceFloatingButton(appContextService: AppContextService) {
             override fun onPanDetected(presentable: Presentable<FloatingButton>) {}
             override fun onShow(presentable: Presentable<FloatingButton>) {}
             override fun onTapDetected(presentable: Presentable<FloatingButton>) {
+                val scanStateManager = AssuranceComponentRegistry.assuranceStateManager?.getScanStateManager()
+                if (scanStateManager?.getScanState() == AssuranceConstants.AppScanKeys.ScanState.ACTIVE) {
+                    scanStateManager.updateScanState(AssuranceConstants.AppScanKeys.ScanState.INACTIVE)
+                    updateGraphic(true)
+                    scanStateManager.sendScanStateEvent(AssuranceConstants.AppScanKeys.ScanState.INACTIVE)
+                    return
+                }
+
                 val hostApplication: Context? = MobileCore.getApplication()
                 val intent = Intent(hostApplication, AssuranceActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
@@ -132,10 +142,19 @@ internal class AssuranceFloatingButton(appContextService: AppContextService) {
      */
     internal fun updateGraphic(connected: Boolean) {
         val context = ServiceProvider.getInstance().appContextService.applicationContext
+        val graphic = if (connected) {
+            if (AssuranceComponentRegistry.assuranceStateManager?.getScanStateManager()?.getScanState() == AssuranceConstants.AppScanKeys.ScanState.ACTIVE) {
+                R.drawable.record_button
+            } else {
+                R.drawable.ic_assurance_active
+            }
+        } else {
+            R.drawable.ic_assurance_inactive
+        }
+
         context?.let {
             val bitmap = getGraphic(
-                it,
-                if (connected) R.drawable.ic_assurance_active else R.drawable.ic_assurance_inactive
+                it, graphic
             )
             floatingButtonPresentable.getPresentation().eventHandler.updateGraphic(bitmap)
         } ?: run {
