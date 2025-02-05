@@ -275,9 +275,7 @@ class AssuranceSession implements AssuranceWebViewSocketHandler {
             // then there was no Assurance UI because we were attempting to reconnect
             // so send a scan mode change event to show the Assurance UI based on current state
             // Send an event on the EventHub to notify the app that the scan mode is ready
-            assuranceStateManager
-                    .getScanStateManager()
-                    .sendScanStateEvent(scanStateBeforeReconnect);
+            assuranceStateManager.getScanStateManager().updateScanState(scanStateBeforeReconnect);
         }
 
         // save the connection url

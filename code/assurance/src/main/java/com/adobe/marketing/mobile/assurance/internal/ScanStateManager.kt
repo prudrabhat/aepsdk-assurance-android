@@ -58,7 +58,7 @@ internal class ScanStateManager(val assuranceDataStoreService: DataStoring) {
     internal fun sendScanStateEvent(scanState: AssuranceConstants.AppScanKeys.ScanState) {
         val readyScan =
             Event.Builder(
-                "Stance State",
+                "Scan State",
                 EventType.ASSURANCE,
                 AssuranceConstants.AppScanKeys.APP_SCAN_EVENT_SOURCE
             )

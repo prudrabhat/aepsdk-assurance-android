@@ -240,6 +240,15 @@ class AssuranceSessionOrchestrator {
                 sessionId,
                 connectionURL);
         createSession(sessionId, environment, pin, null, SessionAuthorizingPresentationType.PIN);
+
+        // We are reconnecting to a stored session, so we there is no UI being shown.
+        final AssuranceConstants.AppScanKeys.ScanState scanStateBeforeReconnect =
+                assuranceStateManager.getScanStateManager().getScanState();
+        final AssuranceSession activeSession = getActiveSession();
+        if (activeSession != null) {
+            assuranceStateManager.getScanStateManager().updateScanState(scanStateBeforeReconnect);
+        }
+
         return true;
     }
 
