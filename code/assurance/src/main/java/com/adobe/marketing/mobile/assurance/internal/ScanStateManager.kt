@@ -29,6 +29,7 @@ internal class ScanStateManager(val assuranceDataStoreService: DataStoring) {
     fun updateScanState(scanState: AssuranceConstants.AppScanKeys.ScanState) {
         currentScanState = scanState
         storeScanState(scanState)
+        sendScanStateEvent(scanState)
     }
 
     fun getScanState(): AssuranceConstants.AppScanKeys.ScanState {
@@ -55,16 +56,13 @@ internal class ScanStateManager(val assuranceDataStoreService: DataStoring) {
 
     @JvmName("sendScanStateEvent")
     internal fun sendScanStateEvent(scanState: AssuranceConstants.AppScanKeys.ScanState) {
-        val scanReadyEventData = HashMap<String, Any>()
-        scanReadyEventData["scan_state"] =
-            scanState.toString().lowercase(Locale.getDefault())
         val readyScan =
             Event.Builder(
                 "Stance State",
                 EventType.ASSURANCE,
                 AssuranceConstants.AppScanKeys.APP_SCAN_EVENT_SOURCE
             )
-                .setEventData(scanReadyEventData)
+                .setEventData(mapOf("state" to scanState.toString().toLowerCase(Locale.ROOT)))
                 .build()
         MobileCore.dispatchEvent(readyScan)
     }

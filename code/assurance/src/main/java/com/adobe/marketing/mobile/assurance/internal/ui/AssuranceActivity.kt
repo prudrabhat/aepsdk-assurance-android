@@ -25,13 +25,9 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.navigation.compose.rememberNavController
-import com.adobe.marketing.mobile.Event
-import com.adobe.marketing.mobile.EventType
-import com.adobe.marketing.mobile.MobileCore
 import com.adobe.marketing.mobile.assurance.internal.AssuranceAppState
 import com.adobe.marketing.mobile.assurance.internal.AssuranceComponentRegistry
 import com.adobe.marketing.mobile.assurance.internal.AssuranceConstants
-import com.adobe.marketing.mobile.assurance.internal.AssuranceConstants.AppScanKeys.APP_SCAN_EVENT_SOURCE
 import com.adobe.marketing.mobile.assurance.internal.ui.theme.AssuranceTheme.backgroundColor
 
 /**
@@ -104,10 +100,9 @@ class AssuranceActivity : ComponentActivity() {
         if (initialConnectionPhase !is AssuranceAppState.SessionPhase.Connected &&
             AssuranceComponentRegistry.appState.sessionPhase.value is AssuranceAppState.SessionPhase.Connected
         ) {
-            val scanStateEvent = Event.Builder("Scan State", EventType.ASSURANCE, APP_SCAN_EVENT_SOURCE)
-                .setEventData(mapOf("state" to AssuranceConstants.AppScanKeys.ScanState.READY.toString().lowercase()))
-                .build()
-            MobileCore.dispatchEvent(scanStateEvent)
+            // Update the scan state to READY and send the event to the EventHub.
+            val scanStateManager = AssuranceComponentRegistry.assuranceStateManager?.getScanStateManager()
+            scanStateManager?.updateScanState(AssuranceConstants.AppScanKeys.ScanState.READY)
         }
     }
 }

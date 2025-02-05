@@ -86,7 +86,6 @@ internal class AssuranceFloatingButton(appContextService: AppContextService) {
                 if (scanStateManager?.getScanState() == AssuranceConstants.AppScanKeys.ScanState.ACTIVE) {
                     scanStateManager.updateScanState(AssuranceConstants.AppScanKeys.ScanState.INACTIVE)
                     updateGraphic(true)
-                    scanStateManager.sendScanStateEvent(AssuranceConstants.AppScanKeys.ScanState.INACTIVE)
                     return
                 }
 

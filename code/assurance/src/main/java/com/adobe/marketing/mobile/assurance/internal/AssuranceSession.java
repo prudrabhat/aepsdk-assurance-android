@@ -461,10 +461,8 @@ class AssuranceSession implements AssuranceWebViewSocketHandler {
                 isScanning
                         ? AssuranceConstants.AppScanKeys.ScanState.ACTIVE
                         : AssuranceConstants.AppScanKeys.ScanState.INACTIVE;
-        // update cache and store on disk
+        // update cache and store on disk and send event to EventHub
         assuranceStateManager.getScanStateManager().updateScanState(scanState);
-        // sent the scan state event to the server
-        assuranceStateManager.getScanStateManager().sendScanStateEvent(scanState);
         // update the UI
         assuranceSessionPresentationManager.onScanModeChanged(isScanning);
     }
