@@ -350,6 +350,15 @@ public final class AssuranceExtension extends Extension {
     void handleWildcardEvent(final Event event) {
         // keep track of the last SDK event to create shared state for Assurance
         assuranceStateManager.onSDKEvent(event);
+
+        if (isBlobUploadEvent(event)) {
+            Log.debug(
+                    Assurance.LOG_TAG,
+                    LOG_TAG,
+                    "Wildcard handler got blob upload event. Ignoring relaying to socket");
+            return;
+        }
+
         final Map<String, Object> payload = new HashMap<>();
         payload.put(GenericEventPayloadKey.ACP_EXTENSION_EVENT_NAME, event.getName());
         payload.put(GenericEventPayloadKey.ACP_EXTENSION_EVENT_TYPE, event.getType().toLowerCase());
@@ -415,6 +424,18 @@ public final class AssuranceExtension extends Extension {
                 LOG_TAG,
                 "Unable to process start session event. Could find start session URL"
                         + " or quick connect flag in the event");
+    }
+
+    public boolean isBlobUploadEvent(final Event event) {
+        final Map<String, Object> eventData = event.getEventData();
+        final String eventType = event.getType();
+        final String eventSource = event.getSource();
+        if (eventType.equalsIgnoreCase(EventType.ASSURANCE)
+                && eventSource.equalsIgnoreCase(EventSource.REQUEST_CONTENT)) {
+            return false;
+        }
+
+        return (DataReader.optString(eventData, "blob", null) != null);
     }
 
     // ========================================================================================
