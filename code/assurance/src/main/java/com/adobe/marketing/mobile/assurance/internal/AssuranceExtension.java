@@ -430,8 +430,8 @@ public final class AssuranceExtension extends Extension {
         final Map<String, Object> eventData = event.getEventData();
         final String eventType = event.getType();
         final String eventSource = event.getSource();
-        if (eventType.equalsIgnoreCase(EventType.ASSURANCE)
-                && eventSource.equalsIgnoreCase(EventSource.REQUEST_CONTENT)) {
+        if (!EventType.ASSURANCE.equalsIgnoreCase(eventType)
+                || !EventSource.REQUEST_CONTENT.equalsIgnoreCase(eventSource)) {
             return false;
         }
 
