@@ -41,8 +41,8 @@ internal class AssuranceFloatingButton(appContextService: AppContextService) {
 
     private companion object {
         private const val LOG_TAG = "AssuranceFloatingButton"
-        private const val GRAPHIC_HEIGHT_DP = 80
-        private const val GRAPHIC_WIDTH_DP = 80
+        private const val GRAPHIC_HEIGHT_DP = 32
+        private const val GRAPHIC_WIDTH_DP = 32
         private const val GRAPHIC_CORNER_RADIUS = 10f
     }
 
