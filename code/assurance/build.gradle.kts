@@ -31,7 +31,9 @@ aepLibrary {
 
 dependencies {
     // Stop using SNAPSHOT after Core release.
-    implementation("com.adobe.marketing.mobile:core:$mavenCoreVersion")
+    // implementation("com.adobe.marketing.mobile:core:$mavenCoreVersion")
+    implementation("com.github.prudrabhat.aepsdk-core-android:core:5d94433797")
+
     // Compose Navigation
     implementation("androidx.navigation:navigation-compose:$navigationComposeVersion")
     // Compose ViewModel
