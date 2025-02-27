@@ -61,7 +61,7 @@ internal class AssuranceFloatingButton(appContextService: AppContextService) {
         FloatingButtonSettings.Builder()
             .height(GRAPHIC_HEIGHT_DP)
             .width(GRAPHIC_WIDTH_DP)
-            .cornerRadius(GRAPHIC_CORNER_RADIUS)
+            //.cornerRadius(GRAPHIC_CORNER_RADIUS)
             .initialGraphic(initialGraphic)
             .build()
 
