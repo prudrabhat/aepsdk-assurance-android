@@ -11,10 +11,13 @@
 
 package com.adobe.marketing.mobile.assurance.internal.ui.floatingbutton
 
+import android.app.UiModeManager
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import androidx.activity.ComponentActivity.UI_MODE_SERVICE
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.graphics.drawable.toBitmap
 import com.adobe.marketing.mobile.Assurance
@@ -63,6 +66,17 @@ internal class AssuranceFloatingButton(appContextService: AppContextService) {
             .initialGraphic(initialGraphic)
             .build()
 
+
+    val context  = ServiceProvider.getInstance().appContextService.applicationContext
+
+
+
+    private val isTv: Boolean = (context?.getSystemService(
+            UI_MODE_SERVICE
+        ) as UiModeManager).let {
+            return@let it.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
+        }
+
     /**
      * Event listener for the floating button. The only event we care about is the tap event.
      * Configured to launch the Assurance activity when the button is tapped.
@@ -108,17 +122,25 @@ internal class AssuranceFloatingButton(appContextService: AppContextService) {
     /**
      * Makes the floating button visible on the screen.
      */
-    internal fun show() = floatingButtonPresentable.show()
+    internal fun show() {
+        if (isTv) return else { floatingButtonPresentable.show() }
+    }
 
     /**
      * Hides the floating button from the screen.
      */
-    internal fun hide() = floatingButtonPresentable.hide()
+    internal fun hide() {
+        if (isTv) return
+        floatingButtonPresentable.hide()
+    }
 
     /**
      * Detaches the floating button from the view hierarchy.
      */
-    internal fun remove() = floatingButtonPresentable.dismiss()
+    internal fun remove() {
+        if (isTv) return
+        floatingButtonPresentable.dismiss()
+    }
 
     /**
      * Returns true if the floating button is currently visible or hidden.
@@ -131,6 +153,7 @@ internal class AssuranceFloatingButton(appContextService: AppContextService) {
      * @param connected true if Assurance is connected, false otherwise
      */
     internal fun updateGraphic(connected: Boolean) {
+        if (isTv) return
         val context = ServiceProvider.getInstance().appContextService.applicationContext
         context?.let {
             val bitmap = getGraphic(

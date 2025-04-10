@@ -36,3 +36,4 @@ include (
     ":assurance-testapp"
 )
 
+include(":assurancetvtestapp")
