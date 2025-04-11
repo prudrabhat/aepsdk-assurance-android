@@ -16,6 +16,8 @@ import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.FloatingActionButton
@@ -80,7 +82,12 @@ fun AssuranceSessionConnectionIndicator(
                     "AssuranceFloatingButtonComposable",
                     "Assurance Floating Button Focused: ${it.hasFocus}"
                 )
-            }
+            }.padding(
+                start = 16.dp,
+                end = 16.dp,
+                top = 16.dp,
+                bottom = 16.dp
+            )
         ,
         onClick = {
             try {

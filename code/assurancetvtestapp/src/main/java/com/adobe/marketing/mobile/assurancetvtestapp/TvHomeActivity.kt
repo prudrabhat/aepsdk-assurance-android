@@ -50,7 +50,7 @@ class TvHomeActivity : ComponentActivity() {
         MobileCore.setLogLevel(LoggingMode.VERBOSE)
         MobileCore.initialize(
             this.application,
-            "94f571f308d5/d9220cd8c3aa/launch-2e799e530b10-development"
+            "YOUR_APP_ID"
         ) {
             Log.d("TAG", "MobileCore Initialized")
         }
@@ -128,9 +128,6 @@ fun TvHomeScreen(onCardClick: (String) -> Unit) {
             )
         }
 
-        item {
-            AssuranceSessionConnectionIndicator()
-        }
 
         item {
             ContentRow(
@@ -139,6 +136,20 @@ fun TvHomeScreen(onCardClick: (String) -> Unit) {
                 onCardClick = onCardClick
             )
         }
+
+        item {
+            Column(modifier = Modifier.padding(vertical = 10.dp)) {
+                Text(
+                    text = "Assurance Session",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    modifier = Modifier.padding(start = 24.dp, bottom = 12.dp)
+                )
+                AssuranceSessionConnectionIndicator()
+            }
+        }
+
 
         item {
             ContentRow(
@@ -218,7 +229,6 @@ fun ContentCard(title: String, onClick: () -> Unit) {
     }
 }
 
-@OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
 fun DetailScreen(title: String, onBackClick: () -> Unit) {
     Column(
