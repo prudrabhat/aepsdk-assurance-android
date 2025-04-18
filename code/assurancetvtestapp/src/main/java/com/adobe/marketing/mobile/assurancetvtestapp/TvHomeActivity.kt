@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -33,7 +34,6 @@ import androidx.navigation.navArgument
 import androidx.tv.material3.Button
 import androidx.tv.material3.Card
 import androidx.tv.material3.CardDefaults
-import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import com.adobe.marketing.mobile.LoggingMode
@@ -50,7 +50,7 @@ class TvHomeActivity : ComponentActivity() {
         MobileCore.setLogLevel(LoggingMode.VERBOSE)
         MobileCore.initialize(
             this.application,
-            "YOUR_APP_ID"
+            "94f571f308d5/d9220cd8c3aa/launch-2e799e530b10-development"
         ) {
             Log.d("TAG", "MobileCore Initialized")
         }
@@ -81,34 +81,47 @@ object AppDestinations {
 
 @Composable
 fun TvNavHost(navController: NavHostController = rememberNavController()) {
-    NavHost(
-        navController = navController,
-        startDestination = AppDestinations.HOME_ROUTE
-    ) {
-        composable(AppDestinations.HOME_ROUTE) {
-            TvHomeScreen(onCardClick = { contentTitle ->
-                navController.navigate(AppDestinations.detailRoute(contentTitle))
-            })
-        }
 
-        composable(
-            route = AppDestinations.DETAIL_ROUTE,
-            arguments = listOf(
-                navArgument("contentTitle") {
-                    type = NavType.StringType
-                }
-            )
-        ) { backStackEntry ->
-            val contentTitle =
-                backStackEntry.arguments?.getString("contentTitle") ?: "Unknown Content"
-            DetailScreen(
-                title = contentTitle,
-                onBackClick = {
-                    navController.popBackStack()
-                }
-            )
+        NavHost(
+            navController = navController,
+            startDestination = AppDestinations.HOME_ROUTE
+        ) {
+            composable(AppDestinations.HOME_ROUTE) {
+                TvHomeScreen(onCardClick = { contentTitle ->
+                    navController.navigate(AppDestinations.detailRoute(contentTitle))
+                })
+            }
+
+            composable(
+                route = AppDestinations.DETAIL_ROUTE,
+                arguments = listOf(
+                    navArgument("contentTitle") {
+                        type = NavType.StringType
+                    }
+                )
+            ) { backStackEntry ->
+                val contentTitle =
+                    backStackEntry.arguments?.getString("contentTitle") ?: "Unknown Content"
+                DetailScreen(
+                    title = contentTitle,
+                    onBackClick = {
+                        navController.popBackStack()
+                    }
+                )
+            }
         }
-    }
+    AssuranceSessionConnectionIndicator(
+            size = 50,
+            cornerRadius = 10f,
+            alignment = Alignment.TopEnd
+    )
+
+        // Uncomment the following line to use the PersistentOverlay
+
+//        PersistentOverlay {
+//            Log.d("TAG", "Overlay button clicked")
+//        }
+
 }
 
 @Composable
@@ -136,20 +149,6 @@ fun TvHomeScreen(onCardClick: (String) -> Unit) {
                 onCardClick = onCardClick
             )
         }
-
-        item {
-            Column(modifier = Modifier.padding(vertical = 10.dp)) {
-                Text(
-                    text = "Assurance Session",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    modifier = Modifier.padding(start = 24.dp, bottom = 12.dp)
-                )
-                AssuranceSessionConnectionIndicator()
-            }
-        }
-
 
         item {
             ContentRow(
@@ -201,7 +200,6 @@ fun ContentRow(title: String, items: List<String>, onCardClick: (String) -> Unit
     }
 }
 
-@OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
 fun ContentCard(title: String, onClick: () -> Unit) {
     Card(
@@ -237,19 +235,6 @@ fun DetailScreen(title: String, onBackClick: () -> Unit) {
             .padding(32.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-        Text(
-            text = title,
-            fontSize = 42.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.White
-        )
-
-        Text(
-            text = "This is a detailed view for $title",
-            fontSize = 24.sp,
-            color = Color.White,
-            modifier = Modifier.padding(top = 16.dp)
-        )
 
         Column(
             modifier = Modifier.padding(top = 24.dp)
@@ -272,11 +257,23 @@ fun DetailScreen(title: String, onBackClick: () -> Unit) {
             )
         }
 
-        Button(
-            onClick = onBackClick,
-            modifier = Modifier.padding(top = 24.dp)
-        ) {
-            Text("Back to Home")
+        Row(
+            modifier = Modifier.padding(top = 24.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+
+            ) {
+            Button(
+                onClick = onBackClick,
+                modifier = Modifier.padding(top = 24.dp)
+            ) {
+                Text("Back to Home")
+            }
+            Button(
+                onClick = onBackClick,
+                modifier = Modifier.padding(top = 24.dp)
+            ) {
+                Text("Some other button")
+            }
         }
     }
 }

@@ -13,10 +13,12 @@ package com.adobe.marketing.mobile.assurance.internal.ui.floatingbutton
 
 import android.content.Context
 import android.content.Intent
+import android.view.KeyEvent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,7 +30,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.adobe.marketing.mobile.Assurance
@@ -41,7 +45,7 @@ import com.adobe.marketing.mobile.services.Log
 /**
  * A composable implementation of the Assurance floating button.
  * This allows app developers to embed the Assurance floating button directly into their UI
- * when using Jetpack Compose rather than relying on the system overlay implementation.
+ * when using Jetpack Compose rather than relying on the default implementation.
  *
  * @param connected true if Assurance is connected, false otherwise
  * @param size the size of the button in dp
@@ -50,7 +54,8 @@ import com.adobe.marketing.mobile.services.Log
 @Composable
 fun AssuranceSessionConnectionIndicator(
     size: Int = 50,
-    cornerRadius: Float = 10f
+    cornerRadius: Float = 10f,
+    alignment: Alignment = Alignment.BottomEnd,
 ) {
     val context = LocalContext.current
 
@@ -61,65 +66,83 @@ fun AssuranceSessionConnectionIndicator(
     } else {
         R.drawable.ic_assurance_inactive
     }
-    val isFocused = remember { mutableStateOf<Boolean>(false) }
+    val isFocused = remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
 
-    FloatingActionButton(
-        modifier = Modifier
-            .run {
-                if (isFocused.value) {
-                    border(
-                        BorderStroke(2.dp, Color.White),
-                        RoundedCornerShape(cornerRadius.dp)
-                    )
-                } else {
-                    this
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        FloatingActionButton(
+            modifier = Modifier
+                .align(alignment)
+                .run {
+                    if (isFocused.value) {
+                        border(
+                            BorderStroke(2.dp, Color.White),
+                            RoundedCornerShape(cornerRadius.dp)
+                        )
+                    } else {
+                        this
+                    }
                 }
-            }
-            .onFocusEvent {
-                isFocused.value = it.hasFocus
-                Log.debug(
-                    Assurance.LOG_TAG,
-                    "AssuranceFloatingButtonComposable",
-                    "Assurance Floating Button Focused: ${it.hasFocus}"
+                .onFocusEvent {
+                    isFocused.value = it.hasFocus
+                    Log.debug(
+                        Assurance.LOG_TAG,
+                        "AssuranceFloatingButtonComposable",
+                        "Assurance Floating Button Focused: ${it.hasFocus}"
+                    )
+                }
+                .padding(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = 16.dp,
+                    bottom = 16.dp
                 )
-            }.padding(
-                start = 16.dp,
-                end = 16.dp,
-                top = 16.dp,
-                bottom = 16.dp
-            )
-        ,
-        onClick = {
-            try {
-                // Start a new session if the button is clicked and the session is disconnected
-                if (buttonState.value is AssuranceAppState.SessionPhase.Disconnected) {
-                    val disconnected =
-                        buttonState.value as AssuranceAppState.SessionPhase.Disconnected
-                    if (!disconnected.reconnecting) {
-                        Assurance.startSession()
+                .onKeyEvent { keyEvent ->
+                    // Handle key events when the button is focused
+                    if (isFocused.value) {
+                        when (keyEvent.nativeKeyEvent.keyCode) {
+                            KeyEvent.KEYCODE_DPAD_LEFT,
+                            KeyEvent.KEYCODE_DPAD_DOWN -> {
+                                focusManager.clearFocus(true)
+                                true
+                            }
+
+                            else -> false
+                        }
+                    } else {
+                        false
+                    }
+                },
+            onClick = {
+                try {
+                    // Start a new session if the button is clicked and the session is disconnected
+                    if (buttonState.value is AssuranceAppState.SessionPhase.Disconnected) {
+                        val disconnected =
+                            buttonState.value as AssuranceAppState.SessionPhase.Disconnected
+                        val isReconnecting = disconnected.reconnecting
+                        if (!isReconnecting) Assurance.startSession() else launchAssuranceActivity(context)
                     } else {
                         launchAssuranceActivity(context)
                     }
-                } else {
-                    launchAssuranceActivity(context)
+                } catch (e: Exception) {
+                    Log.debug(
+                        Assurance.LOG_TAG,
+                        "AssuranceFloatingButtonComposable",
+                        "Failed to launch Assurance activity: ${e.localizedMessage}"
+                    )
                 }
-            } catch (e: Exception) {
-                Log.debug(
-                    Assurance.LOG_TAG,
-                    "AssuranceFloatingButtonComposable",
-                    "Failed to launch Assurance activity: ${e.localizedMessage}"
-                )
-            }
-        },
-        backgroundColor = Color.Transparent,
-        shape = RoundedCornerShape(0.dp),
-    ) {
-        Image(
-            painter = painterResource(id = iconRes),
-            contentDescription = "Assurance Floating Button",
-            modifier = Modifier
-                .size(size.dp)
-        )
+            },
+            backgroundColor = Color.Transparent,
+            shape = RoundedCornerShape(0.dp),
+        ) {
+            Image(
+                painter = painterResource(id = iconRes),
+                contentDescription = "Assurance Floating Button",
+                modifier = Modifier
+                    .size(size.dp)
+            )
+        }
     }
 }
 
