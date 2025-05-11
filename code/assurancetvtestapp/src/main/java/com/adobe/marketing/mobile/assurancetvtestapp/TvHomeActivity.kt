@@ -113,15 +113,7 @@ fun TvNavHost(navController: NavHostController = rememberNavController()) {
     AssuranceSessionConnectionIndicator(
             size = 50,
             cornerRadius = 10f,
-            alignment = Alignment.TopEnd
     )
-
-        // Uncomment the following line to use the PersistentOverlay
-
-//        PersistentOverlay {
-//            Log.d("TAG", "Overlay button clicked")
-//        }
-
 }
 
 @Composable

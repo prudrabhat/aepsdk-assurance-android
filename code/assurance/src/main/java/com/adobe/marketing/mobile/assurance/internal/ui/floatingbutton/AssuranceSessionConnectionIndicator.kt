@@ -54,8 +54,7 @@ import com.adobe.marketing.mobile.services.Log
 @Composable
 fun AssuranceSessionConnectionIndicator(
     size: Int = 50,
-    cornerRadius: Float = 10f,
-    alignment: Alignment = Alignment.BottomEnd,
+    cornerRadius: Float = 10f
 ) {
     val context = LocalContext.current
 
@@ -69,11 +68,10 @@ fun AssuranceSessionConnectionIndicator(
     val isFocused = remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
 
-
     Box(modifier = Modifier.fillMaxSize()) {
         FloatingActionButton(
             modifier = Modifier
-                .align(alignment)
+                .align(Alignment.TopEnd)
                 .run {
                     if (isFocused.value) {
                         border(

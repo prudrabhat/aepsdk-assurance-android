@@ -66,16 +66,15 @@ internal class AssuranceFloatingButton(appContextService: AppContextService) {
             .initialGraphic(initialGraphic)
             .build()
 
+    val context = ServiceProvider.getInstance().appContextService.applicationContext
 
-    val context  = ServiceProvider.getInstance().appContextService.applicationContext
-
-
-
-    private val isTv: Boolean = (context?.getSystemService(
+    private val isTv: Boolean = (
+        context?.getSystemService(
             UI_MODE_SERVICE
-        ) as UiModeManager).let {
-            return@let it.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
-        }
+        ) as UiModeManager
+        ).let {
+        return@let it.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
+    }
 
     /**
      * Event listener for the floating button. The only event we care about is the tap event.

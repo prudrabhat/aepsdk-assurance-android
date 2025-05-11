@@ -11,9 +11,6 @@
 
 package com.adobe.marketing.mobile.assurance.internal.ui
 
-import android.app.UiModeManager
-import android.content.pm.ActivityInfo
-import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -22,17 +19,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.navigation.compose.rememberNavController
-import com.adobe.marketing.mobile.Assurance
-import com.adobe.marketing.mobile.Assurance.LOG_TAG
 import com.adobe.marketing.mobile.assurance.internal.AssuranceComponentRegistry
 import com.adobe.marketing.mobile.assurance.internal.ui.theme.AssuranceTheme.backgroundColor
-import com.adobe.marketing.mobile.services.Log
-import com.adobe.marketing.mobile.services.ServiceProvider
 
 /**
  * Activity that hosts all of the Assurance UI.

@@ -12,22 +12,14 @@
 package com.adobe.marketing.mobile.assurance.internal
 
 import android.app.Activity
-import android.app.UiModeManager
-import android.content.Context.UI_MODE_SERVICE
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.content.res.Configuration
 import androidx.annotation.VisibleForTesting
-import androidx.core.content.ContextCompat.getSystemService
-import com.adobe.marketing.mobile.Assurance
 import com.adobe.marketing.mobile.assurance.internal.AssuranceConstants.SocketCloseCode
 import com.adobe.marketing.mobile.assurance.internal.AssuranceConstants.UILogColorVisibility
 import com.adobe.marketing.mobile.assurance.internal.AssuranceWebViewSocket.SocketReadyState
 import com.adobe.marketing.mobile.assurance.internal.ui.AssuranceActivity
 import com.adobe.marketing.mobile.assurance.internal.ui.floatingbutton.AssuranceFloatingButton
-import com.adobe.marketing.mobile.services.Log
 import com.adobe.marketing.mobile.services.ServiceProvider
-
 
 /** Manages the UI elements required for an Assurance Session.  */
 internal class AssuranceSessionPresentationManager {
